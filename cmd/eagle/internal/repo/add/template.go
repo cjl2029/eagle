@@ -38,6 +38,8 @@ type {{.Name}}Repo interface {
 	Update{{.Name}}(ctx context.Context, id int64, data *model.{{.Name}}Model) error
 	Get{{.Name}}(ctx context.Context, id int64) (ret *model.{{.Name}}Model, err error)
 	BatchGet{{.Name}}(ctx context.Context, ids []int64) (ret []*model.{{.Name}}Model, err error)
+	Page{{.Name}}(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error)
+	Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error)
 }
 
 type {{.LcName}}Repo struct {
@@ -221,6 +223,18 @@ func (r *{{.LcName}}Repo) BatchGet{{.Name}}(ctx context.Context, ids []int64) (r
 	}
 	return items, nil
 {{- end }}
+}
+
+// Page{{.Name}} get page list
+func (r *{{.LcName}}Repo) Page{{.Name}}(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error) {
+	ret, total, err = dao.{{.Name}}Model.WithContext(ctx).Where(field.Attrs(query)).Page((pageNum-1)*pageSize, pageSize)
+	return 
+}
+
+// Delete{{.Name}} delete item
+func (r *{{.LcName}}Repo) Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error) {
+	info, err := dao.{{.Name}}Model.WithContext(ctx).Where(dao.{{.Name}}Model.ID.Eq(id)).delete()
+	return 
 }
 `
 
