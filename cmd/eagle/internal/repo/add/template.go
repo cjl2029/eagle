@@ -23,6 +23,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/singleflight"
 	"gorm.io/gorm"
+	"gorm.io/gen"
+	"gorm.io/gen/field"
+
 
 	"{{.ModName}}/internal/dal"
 	"{{.ModName}}/internal/dal/cache"
@@ -233,7 +236,7 @@ func (r *{{.LcName}}Repo) Page{{.Name}}(ctx context.Context, pageSize int, pageN
 
 // Delete{{.Name}} delete item
 func (r *{{.LcName}}Repo) Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error) {
-	info, err := dao.{{.Name}}Model.WithContext(ctx).Where(dao.{{.Name}}Model.ID.Eq(id)).delete()
+	info, err = dao.{{.Name}}Model.WithContext(ctx).Where(dao.{{.Name}}Model.ID.Eq(id)).delete()
 	return 
 }
 `

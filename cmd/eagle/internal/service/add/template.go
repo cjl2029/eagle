@@ -53,7 +53,7 @@ func (s *{{.LcName}}Service) Page{{.Name}}(ctx context.Context, pageSize int, pa
 
 // Delete{{.Name}} delete item
 func (s *{{.LcName}}Service) Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error) {
-	info, err := s.repo.Delte{{.Name}}(ctx,id)
+	info, err = s.repo.Delte{{.Name}}(ctx,id)
 	return 
 }
 
