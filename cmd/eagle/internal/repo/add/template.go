@@ -230,7 +230,11 @@ func (r *{{.LcName}}Repo) BatchGet{{.Name}}(ctx context.Context, ids []int64) (r
 
 // Page{{.Name}} get page list
 func (r *{{.LcName}}Repo) Page{{.Name}}(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error) {
-	ret, total, err = dao.{{.Name}}Model.WithContext(ctx).Where(field.Attrs(query)).Page((pageNum-1)*pageSize, pageSize)
+	ret, total, err = dao.{{.Name}}Model.
+	WithContext(ctx).
+	Where(field.Attrs(query)).
+	Order(dao.{{.Name}}Model.ID.Desc())
+	Page((pageNum-1)*pageSize, pageSize)
 	return 
 }
 
