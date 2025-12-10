@@ -17,20 +17,22 @@ import (
 
 	localCache "github.com/go-eagle/eagle/pkg/cache"
 	"github.com/go-eagle/eagle/pkg/encoding"
+	"github.com/go-eagle/eagle/pkg/redis"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/singleflight"
-	"gorm.io/gorm"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
+	"gorm.io/gorm"
 
 
 	"{{.ModName}}/internal/dal"
 	"{{.ModName}}/internal/dal/cache"
 	"{{.ModName}}/internal/dal/db/dao"
 	"{{.ModName}}/internal/dal/db/model"
+	"{{.ModName}}/internal/types"
 )
 
 var _ {{.Name}}Repo = (*{{.LcName}}Repo)(nil)
@@ -230,17 +232,17 @@ func (r *{{.LcName}}Repo) BatchGet{{.Name}}(ctx context.Context, ids []int64) (r
 
 // Page{{.Name}} get page list
 func (r *{{.LcName}}Repo) Page{{.Name}}(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error) {
-	ret, total, err = dao.{{.Name}}Model.
-	WithContext(ctx).
-	Where(field.Attrs(query)).
-	Order(dao.{{.Name}}Model.ID.Desc())
-	Page((pageNum-1)*pageSize, pageSize)
-	return 
+	ret, total, err = dao.ApplicationModel.
+		WithContext(ctx).
+		Where(field.Attrs(query)).
+		Order(dao.ApplicationModel.ID.Desc()).
+		FindByPage((pageNum-1)*pageSize, pageSize)
+	return
 }
 
 // Delete{{.Name}} delete item
 func (r *{{.LcName}}Repo) Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error) {
-	info, err = dao.{{.Name}}Model.WithContext(ctx).Where(dao.{{.Name}}Model.ID.Eq(id)).delete()
+	info, err = dao.{{.Name}}Model.WithContext(ctx).Where(dao.{{.Name}}Model.ID.Eq(id)).Delete()
 	return 
 }
 `
