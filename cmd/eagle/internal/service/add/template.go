@@ -21,10 +21,10 @@ import (
 
 // {{.Name}}Service define a interface
 type {{.Name}}Service interface {
-	Create{{.Name}}(ctx context.Context, data *model.{{.Name}}Model) (id int64, err error)
-	Update{{.Name}}(ctx context.Context, id int64, data *model.{{.Name}}Model) (err error)
-	Page{{.Name}}(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error)
-	Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error)
+	Create(ctx context.Context, data *model.{{.Name}}Model) (id int64, err error)
+	Update(ctx context.Context, id int64, data *model.{{.Name}}Model) (err error)
+	Page(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error)
+	Delete(ctx context.Context, id int64) (info gen.ResultInfo, err error)
 }
 
 type {{.LcName}}Service struct {
@@ -39,26 +39,26 @@ func New{{.Name}}Service(repo repository.{{.Name}}Repo) {{.Name}}Service {
 	}
 }
 
-// Create{{.Name}} add item
-func (s *{{.LcName}}Service) Create{{.Name}}(ctx context.Context, data *model.{{.Name}}Model) (id int64, err error) {
+// Create {{.Name}} add item
+func (s *{{.LcName}}Service) Create(ctx context.Context, data *model.{{.Name}}Model) (id int64, err error) {
 	id, err = s.repo.Create{{.Name}}(ctx,data)
 	return 
 }
 
-// Update{{.Name}} delete item
-func (s *{{.LcName}}Service) Update{{.Name}}(ctx context.Context, id int64, data *model.{{.Name}}Model) (err error) {
+// Update {{.Name}} delete item
+func (s *{{.LcName}}Service) Update(ctx context.Context, id int64, data *model.{{.Name}}Model) (err error) {
 	err = s.repo.Update{{.Name}}(ctx,id,data)
 	return 
 }
 
-// Page{{.Name}} get page list
-func (s *{{.LcName}}Service) Page{{.Name}}(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error) {
+// Page {{.Name}} get page list
+func (s *{{.LcName}}Service) Page(ctx context.Context, pageSize int, pageNum int, query *types.{{.Name}}Query) (ret []*model.{{.Name}}Model, total int64, err error) {
 	ret, total, err = s.repo.Page{{.Name}}(ctx, pageSize, pageNum, query)
 	return 
 }
 
-// Delete{{.Name}} delete item
-func (s *{{.LcName}}Service) Delete{{.Name}}(ctx context.Context, id int64) (info gen.ResultInfo, err error) {
+// Delete {{.Name}} delete item
+func (s *{{.LcName}}Service) Delete(ctx context.Context, id int64) (info gen.ResultInfo, err error) {
 	info, err = s.repo.Delete{{.Name}}(ctx,id)
 	return 
 }

@@ -10,19 +10,20 @@ const handlerTemplate = `
 package v1
 
 import (
+	"strconv"
+
     "github.com/gin-gonic/gin"
     "github.com/go-eagle/eagle/pkg/app"
-	"github.com/go-eagle/eagle/pkg/errcode"
-
-	// "{{.ModName}}/internal/service"
+	
+	"{{.ModName}}/internal/dal/db/model"
+	"{{.ModName}}/internal/ecode"
+	"{{.ModName}}/internal/service"
 	"{{.ModName}}/internal/types"
 )
 
 // {{.Name}}Handler {{.LcName}}
 type {{.Name}}Handler struct {
-	// here you can add your service
-	// example:
-	// 	UserService service.UserService
+	{{.Name}}Service service.{{.Name}}Service
 }
 
 // New{{.Name}}Handler create a new {{.Name}}Handler
@@ -36,53 +37,103 @@ func New{{.Name}}Handler() *{{.Name}}Handler {
 // @Tags system
 // @Accept  json
 // @Produce  json
-// @Router /{{.UsName}} {{.Method}}
-func (h *{{.Name}}Handler) {{.Name}}(c *gin.Context) {
-	var req types.{{.Name}}Request
-	{{- if eq .Method "GET" }}
-	if err := c.ShouldBindQuery(&req); err != nil {
-		app.Error(c, errcode.ErrInvalidParam.WithDetails(err.Error()))
+// @Router /{{.UsName}}[GET]
+func (h *{{.Name}}Handler) Page(c *gin.Context) {
+	var req types.{{.Name}}Query
+	if err := c.ShouldBind(&req); err != nil {
+		app.Error(c, ecode.ErrParamInvalid.WithDetails(err.Error()))
 		return
 	}
-	{{- end }}
 
-	{{- if eq .Method "POST" }}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		app.Error(c, errcode.ErrInvalidParam.WithDetails(err.Error()))
+	var pageNoReq = c.DefaultQuery("pageNo", "1")
+	var pageSizeReq = c.DefaultQuery("pageSize", "10")
+	pageNo, _ := strconv.Atoi(pageNoReq)
+	pageSize, _ := strconv.Atoi(pageSizeReq)
+
+	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageNo, pageSize, &req)
+	if err != nil {
+		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
 		return
 	}
-	{{- end }}
 
-	{{- if eq .Method "PUT" }}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		app.Error(c, errcode.ErrInvalidParam.WithDetails(err.Error()))
+	app.Success(c, gin.H{
+		"pageData": ret,
+		"total":    total,
+	})
+}
+
+// {{.Name}} {{.LcName}}
+// @Summary {{.LcName}}
+// @Description {{.LcName}}
+// @Tags system
+// @Accept  json
+// @Produce  json
+// @Router /{{.UsName}}[POST]
+func (h *{{.Name}}Handler) Create(c *gin.Context) {
+	var req struct {
+
+	}
+	if err := c.ShouldBind(&req); err != nil {
+		app.Error(c, ecode.ErrParamInvalid.WithDetails(err.Error()))
 		return
 	}
-	{{- end }}
-
-	{{- if eq .Method "PATCH" }}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		app.Error(c, errcode.ErrInvalidParam.WithDetails(err.Error()))
+	_, err := h.{{.Name}}Service.Add(c.Request.Context(), &model.{{.Name}}Model{
+	})
+	if err != nil {
+		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
 		return
 	}
-	{{- end }}
 
-	{{- if eq .Method "DELETE" }}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		app.Error(c, errcode.ErrInvalidParam.WithDetails(err.Error()))
+	app.Success(c, true)
+}
+
+// {{.Name}} {{.LcName}}
+// @Summary {{.LcName}}
+// @Description {{.LcName}}
+// @Tags system
+// @Accept  json
+// @Produce  json
+// @Router /{{.UsName}}/:id[PATCH]
+func (h *{{.Name}}Handler) Update(c *gin.Context) {
+	var req struct {
+		
+	}
+	if err := c.ShouldBind(&req); err != nil {
+		app.Error(c, ecode.ErrParamInvalid.WithDetails(err.Error()))
 		return
 	}
-	{{- end }}
+	id := c.Param("id")
+	intId, _ := strconv.Atoi(id)
 
-	var ret any
-	// change to your service
-	// ret, err := service.GreeterSvc.Hello(c, req.Name)
-	// if err != nil {
-	// 	app.Error(c, err)
-	// 	return
-	// }
+	err := h.{{.Name}}Service.Update(c.Request.Context(), int64(intId), &model.{{.Name}}Model{
+		
+	})
+	if err != nil {
+		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
+		return
+	}
 
-	app.Success(c, ret)
+	app.Success(c, true)
+}
+
+// {{.Name}} {{.LcName}}
+// @Summary {{.LcName}}
+// @Description {{.LcName}}
+// @Tags system
+// @Accept  json
+// @Produce  json
+// @Router /{{.UsName}}/:id[DELETE]
+func (h *{{.Name}}Handler) Delete(c *gin.Context) {
+	id := c.Param("id")
+	intId, _ := strconv.Atoi(id)
+
+	_, err := h.{{.Name}}Service.Delete(c.Request.Context(), int64(intId))
+	if err != nil {
+		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
+		return
+	}
+
+	app.Success(c, true)
 }
 `
 
