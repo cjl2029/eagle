@@ -47,10 +47,10 @@ func (h *{{.Name}}Handler) Page(c *gin.Context) {
 
 	var pageNoReq = c.DefaultQuery("pageNo", "1")
 	var pageSizeReq = c.DefaultQuery("pageSize", "10")
-	pageNo, _ := strconv.Atoi(pageNoReq)
+	pageNum, _ := strconv.Atoi(pageNoReq)
 	pageSize, _ := strconv.Atoi(pageSizeReq)
 
-	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageNo, pageSize, &req)
+	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageSize, pageNum,  &req)
 	if err != nil {
 		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
 		return
