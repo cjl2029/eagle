@@ -27,8 +27,10 @@ type {{.Name}}Handler struct {
 }
 
 // New{{.Name}}Handler create a new {{.Name}}Handler
-func New{{.Name}}Handler() *{{.Name}}Handler {
-	return &{{.Name}}Handler{}
+func New{{.Name}}Handler({{.LcName}}Service service.{{.Name}}Service) *{{.Name}}Handler {
+	return &{{.Name}}Handler{
+		{{.Name}}Service: {{.LcName}}Service
+	}
 }
 
 // {{.Name}} {{.LcName}}
