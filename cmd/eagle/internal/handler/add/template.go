@@ -52,7 +52,7 @@ func (h *{{.Name}}Handler) Page(c *gin.Context) {
 	pageNum, _ := strconv.Atoi(pageNoReq)
 	pageSize, _ := strconv.Atoi(pageSizeReq)
 
-	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageSize, pageNum,  &req)
+	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageNum, pageSize, &req)
 	if err != nil {
 		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
 		return
@@ -79,7 +79,7 @@ func (h *{{.Name}}Handler) Create(c *gin.Context) {
 		app.Error(c, ecode.ErrParamInvalid.WithDetails(err.Error()))
 		return
 	}
-	_, err := h.{{.Name}}Service.Add(c.Request.Context(), &model.{{.Name}}Model{
+	_, err := h.{{.Name}}Service.Create(c.Request.Context(), &model.{{.Name}}Model{
 	})
 	if err != nil {
 		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
