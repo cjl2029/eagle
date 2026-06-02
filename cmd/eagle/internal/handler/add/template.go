@@ -19,6 +19,7 @@ import (
 	"{{.ModName}}/internal/ecode"
 	"{{.ModName}}/internal/service"
 	"{{.ModName}}/internal/types"
+	"{{.ModName}}/internal/utils"
 )
 
 // {{.Name}}Handler {{.LcName}}
@@ -29,7 +30,7 @@ type {{.Name}}Handler struct {
 // New{{.Name}}Handler create a new {{.Name}}Handler
 func New{{.Name}}Handler({{.LcName}}Service service.{{.Name}}Service) *{{.Name}}Handler {
 	return &{{.Name}}Handler{
-		{{.Name}}Service: {{.LcName}}Service
+		{{.Name}}Service: {{.LcName}}Service,
 	}
 }
 
@@ -47,12 +48,9 @@ func (h *{{.Name}}Handler) Page(c *gin.Context) {
 		return
 	}
 
-	var pageNoReq = c.DefaultQuery("pageNo", "1")
-	var pageSizeReq = c.DefaultQuery("pageSize", "10")
-	pageNum, _ := strconv.Atoi(pageNoReq)
-	pageSize, _ := strconv.Atoi(pageSizeReq)
+	pageNum, pageSize := utils.GetPaginationParams(c)
 
-	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageNum, pageSize, &req)
+	ret, total, err := h.{{.Name}}Service.Page(c.Request.Context(), pageSize, pageNum, &req)
 	if err != nil {
 		app.Error(c, ecode.ErrServerError.WithDetails(err.Error()))
 		return
